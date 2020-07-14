@@ -11,26 +11,35 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 const render = require("./lib/htmlRenderer");
 
 
-const internQuestions = [
+const employeeFirstQuestion = [
+    {
+        type: "list",
+        message: "What is the role of this employee?",
+        choices: ["Manager", "Engineer", "Intern"],
+        name: "role"
+    }
+]
+
+const managerQuestions = [
     {
         type: "input",
-        message: "Enter the intern's name: ",
-        name: "internName"
+        message: "What is the manager's name?",
+        name: "managerName"
     },
     {
         type: "input",
-        message: "Enter the intern's ID number: ",
-        name: "internId"
+        message: "What is the manager's ID?",
+        name: "managerId"
     },
     {
         type: "input",
-        message: "Enter the intern's E-mail address: ",
-        name: "internEmail"
+        message: "What is the manager's email?",
+        name: "managerEmail"
     },
     {
         type: "input",
-        message: "Enter your School: ",
-        name: "internSchool"
+        message: "What is the employee's office number?",
+        name: "managerOfficeNumber"
     }
 ]
 
@@ -57,38 +66,90 @@ const engineerQuestions = [
     }
 ]
 
-const introQuestions = [
+const internQuestions = [
     {
         type: "input",
-        message: "Enter the Manager's Name: ",
-        name: "managerName"
+        message: "Enter the intern's name: ",
+        name: "internName"
     },
     {
         type: "input",
-        message: "Enter Manager's ID number: ",
-        name: "managerId"
+        message: "Enter the intern's ID number: ",
+        name: "internId"
     },
     {
         type: "input",
-        message: "Enter the Manager's E-mail: ",
-        name: "managerEmail"
+        message: "Enter the intern's E-mail address: ",
+        name: "internEmail"
     },
     {
         type: "input",
-        message: "Enter the Manager's Office Number: ",
-        name: "managerNumber"
-    },
-    {
-        type: "input",
-        message: "How many Engineers are on the team? ",
-        name: "engineerAmount"
-    },
-    {
-        type: "input",
-        message: "how many Interns are on the team? ",
-        name: "internAmount"
+        message: "Enter your School: ",
+        name: "internSchool"
     }
 ]
+
+const newEmployee = [
+    {
+        type: "list",
+        message: "Do you wish to add another employee?",
+        choices: ["Yes", "No"],
+        name: "new"
+    }
+]
+
+
+const arrayOfEmployees = []
+
+function init() {
+
+    inquirer.prompt(employeeFirstQuestion).then(function (response) {
+        switch (response.role) {
+            case "Manager":
+                inquirer.prompt(managerQuestions).then(function (response) {
+                    const newManager = new Manager(response.managerName, response.managerId, response.managerEmail, response.managerOfficeNumber)
+                    arrayOfEmployees.push(newManager);
+                    console.log(arrayOfEmployees);
+                    inputNewEmployee();
+                });
+                break;
+            case "Engineer":
+                inquirer.prompt(engineerQuestions).then(function (response) {
+                    const newEngineer = new Engineer(response.engineerName, response.engineerId, response.engineerEmail, response.engineerGithub)
+                    arrayOfEmployees.push(newEngineer);
+                    console.log(arrayOfEmployees);
+                    inputNewEmployee();
+                });
+                break;
+            case "Intern":
+                inquirer.prompt(internQuestions).then(function (response) {
+                    const newIntern = new Engineer(response.internName, response.internId, response.internEmail, response.internSchool)
+                    arrayOfEmployees.push(newIntern);
+                    console.log(arrayOfEmployees);
+                    inputNewEmployee();
+                });
+                break
+        }
+    });
+}
+
+function inputNewEmployee() {
+    inquirer.prompt(newEmployee).then(function (response) {
+        switch (response.new) {
+            case "Yes":
+                init();
+                break;
+            case "No":
+                const htmlReturnedFromRender = render(arrayOfEmployees);
+                console.log(outputPath)
+                fs.writeFile(`${outputPath}`, htmlReturnedFromRender, function(err) {
+                    if (err) {
+                      return console.log(err);
+                    }});
+                break;
+        }
+    });
+}
 
 init();
 
