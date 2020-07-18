@@ -5,11 +5,13 @@ const inquirer = require("inquirer");
 const path = require("path");
 const fs = require("fs");
 
-const OUTPUT_DIR = path.resolve(__dirname, "output");
-const outputPath = path.join(OUTPUT_DIR, "team.html");
+const OUTPUT_DIR = path.resolve(__dirname, "./outpout");
+const outputPath = path.join(OUTPUT_DIR, "./outpout/team.html");
 
 const render = require("./lib/htmlRenderer");
 
+
+//Initial questions about the employee
 
 const employeeFirstQuestion = [
     {
@@ -20,6 +22,7 @@ const employeeFirstQuestion = [
     }
 ]
 
+//Questions asked when making a manager profile
 const managerQuestions = [
     {
         type: "input",
@@ -43,6 +46,7 @@ const managerQuestions = [
     }
 ]
 
+//Questions asked when making an engineer profile
 const engineerQuestions = [
     {
         type: "input",
@@ -66,6 +70,7 @@ const engineerQuestions = [
     }
 ]
 
+//Questions asked when making an intern profile
 const internQuestions = [
     {
         type: "input",
@@ -89,6 +94,7 @@ const internQuestions = [
     }
 ]
 
+//Questions asked to see if the user wants to add a new employee profile
 const newEmployee = [
     {
         type: "list",
@@ -98,12 +104,17 @@ const newEmployee = [
     }
 ]
 
-
+// Emppty array of employees to start off with
 const arrayOfEmployees = []
 
-function init() {
 
+// Initiation function which starts the questions
+function init() {
     inquirer.prompt(employeeFirstQuestion).then(function (response) {
+       
+       
+       // initiate switch statement based on the employees role response. This will determine what questions they will be asked pulling
+       // from Employee class... then the extentions of that which are the manager, engineer and intern constructors
         switch (response.role) {
             case "Manager":
                 inquirer.prompt(managerQuestions).then(function (response) {
@@ -123,7 +134,7 @@ function init() {
                 break;
             case "Intern":
                 inquirer.prompt(internQuestions).then(function (response) {
-                    const newIntern = new Engineer(response.internName, response.internId, response.internEmail, response.internSchool)
+                    const newIntern = new Intern(response.internName, response.internId, response.internEmail, response.internSchool)
                     arrayOfEmployees.push(newIntern);
                     console.log(arrayOfEmployees);
                     inputNewEmployee();
@@ -133,6 +144,8 @@ function init() {
     });
 }
 
+// Once the user has filled out an employee this function will ask if they want to add another or finish their inputting. 
+// If the chose to finish, the html will be rendered in the output file of the application and ready to be viewed.
 function inputNewEmployee() {
     inquirer.prompt(newEmployee).then(function (response) {
         switch (response.new) {
@@ -150,28 +163,4 @@ function inputNewEmployee() {
         }
     });
 }
-
 init();
-
-// Write code to use inquirer to gather information about the development team members,
-// and to create objects for each team member (using the correct classes as blueprints!)
-
-// After the user has input all employees desired, call the `render` function (required
-// above) and pass in an array containing all employee objects; the `render` function will
-// generate and return a block of HTML including templated divs for each employee!
-
-// After you have your html, you're now ready to create an HTML file using the HTML
-// returned from the `render` function. Now write it to a file named `team.html` in the
-// `output` folder. You can use the variable `outputPath` above target this location.
-// Hint: you may need to check if the `output` folder exists and create it if it
-// does not.
-
-// HINT: each employee type (manager, engineer, or intern) has slightly different
-// information; write your code to ask different questions via inquirer depending on
-// employee type.
-
-// HINT: make sure to build out your classes first! Remember that your Manager, Engineer,
-// and Intern classes should all extend from a class named Employee; see the directions
-// for further information. Be sure to test out each class and verify it generates an
-// object with the correct structure and methods. This structure will be crucial in order
-// for the provided `render` function to work! ```
